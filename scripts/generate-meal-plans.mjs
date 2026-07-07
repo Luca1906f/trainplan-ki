@@ -12,12 +12,12 @@ import {
 import { writeFileSync } from "fs";
 
 const COLORS = {
-  bg: "0A0B10",
-  card: "14161D",
-  border: "2A2D36",
-  text: "F2F4F7",
-  muted: "9AA1AC",
-  cyan: "06D0F9",
+  text: "1F2430",
+  muted: "6B7280",
+  border: "D8DCE3",
+  cardFill: "F7F8FA",
+  accent: "2F6FB0",
+  onAccent: "FFFFFF",
 };
 
 function logoLockup(subtitle) {
@@ -25,10 +25,10 @@ function logoLockup(subtitle) {
     new Paragraph({
       spacing: { after: 60 },
       children: [
-        new TextRun({ text: " FG ", bold: true, color: COLORS.bg, shading: { type: ShadingType.CLEAR, fill: COLORS.cyan } }),
+        new TextRun({ text: " FG ", bold: true, color: COLORS.onAccent, shading: { type: ShadingType.CLEAR, fill: COLORS.accent } }),
         new TextRun({ text: "   " }),
         new TextRun({ text: "Fit", bold: true, size: 32, color: COLORS.text }),
-        new TextRun({ text: "Git", bold: true, size: 32, color: COLORS.cyan }),
+        new TextRun({ text: "Git", bold: true, size: 32, color: COLORS.accent }),
       ],
     }),
     new Paragraph({
@@ -44,7 +44,7 @@ function buildFooter() {
       new Paragraph({
         alignment: AlignmentType.CENTER,
         children: [
-          new TextRun({ text: "FitGit", bold: true, size: 16, color: COLORS.cyan }),
+          new TextRun({ text: "FitGit", bold: true, size: 16, color: COLORS.accent }),
           new TextRun({ text: "   ·   Seite ", size: 16, color: COLORS.muted }),
           new TextRun({ children: [PageNumber.CURRENT], size: 16, color: COLORS.muted }),
           new TextRun({ text: " von ", size: 16, color: COLORS.muted }),
@@ -58,7 +58,7 @@ function buildFooter() {
 function heading(text) {
   return new Paragraph({
     spacing: { before: 320, after: 140 },
-    border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: COLORS.cyan } },
+    border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: COLORS.accent } },
     children: [new TextRun({ text: text.toUpperCase(), bold: true, size: 24, color: COLORS.text })],
   });
 }
@@ -95,7 +95,7 @@ async function buildMealPlan({ planName, calories, macros, meals, outFile }) {
     children.push(
       new Paragraph({
         spacing: { before: 160, after: 40 },
-        children: [new TextRun({ text: name, bold: true, size: 20, color: COLORS.cyan })],
+        children: [new TextRun({ text: name, bold: true, size: 20, color: COLORS.accent })],
       }),
     );
     children.push(body(desc));
@@ -105,7 +105,6 @@ async function buildMealPlan({ planName, calories, macros, meals, outFile }) {
   children.push(body("Werte sind Richtwerte. Passe Portionsgrößen an dein Körpergewicht, Aktivitätslevel und Ziel an — bei Unsicherheit frag mich direkt über FitGit."));
 
   const doc = new Document({
-    background: { color: COLORS.bg },
     styles: { default: { document: { run: { color: COLORS.text, font: "Calibri" } } } },
     sections: [
       {

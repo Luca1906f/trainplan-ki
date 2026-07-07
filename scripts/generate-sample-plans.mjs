@@ -16,12 +16,12 @@ import {
 import { writeFileSync } from "fs";
 
 const COLORS = {
-  bg: "0A0B10",
-  card: "14161D",
-  border: "2A2D36",
-  text: "F2F4F7",
-  muted: "9AA1AC",
-  cyan: "06D0F9",
+  text: "1F2430",
+  muted: "6B7280",
+  border: "D8DCE3",
+  cardFill: "F7F8FA",
+  accent: "2F6FB0",
+  onAccent: "FFFFFF",
 };
 
 const HEADER_CELLS = ["Übung", "Sätze", "Wiederholungen", "Gewicht"];
@@ -44,12 +44,12 @@ function headerRow() {
       (text, i) =>
         new TableCell({
           width: { size: COLUMN_WIDTHS[i], type: WidthType.PERCENTAGE },
-          shading: { type: ShadingType.CLEAR, fill: COLORS.cyan },
+          shading: { type: ShadingType.CLEAR, fill: COLORS.accent },
           margins: CELL_MARGINS,
           borders: cellBorder(),
           children: [
             new Paragraph({
-              children: [new TextRun({ text, bold: true, color: COLORS.bg })],
+              children: [new TextRun({ text, bold: true, color: COLORS.onAccent })],
             }),
           ],
         }),
@@ -65,7 +65,7 @@ function exerciseRow(name, sets, reps) {
       (value, i) =>
         new TableCell({
           width: { size: COLUMN_WIDTHS[i], type: WidthType.PERCENTAGE },
-          shading: { type: ShadingType.CLEAR, fill: COLORS.card },
+          shading: { type: ShadingType.CLEAR, fill: COLORS.cardFill },
           margins: CELL_MARGINS,
           borders: cellBorder(),
           verticalAlign: "center",
@@ -89,7 +89,7 @@ function writeLine() {
   return new Paragraph({
     spacing: { before: 260 },
     border: { bottom: { style: BorderStyle.SINGLE, size: 4, color: COLORS.border } },
-    children: [new TextRun({ text: " ", color: COLORS.card })],
+    children: [new TextRun({ text: " " })],
   });
 }
 
@@ -98,10 +98,10 @@ function logoLockup() {
     new Paragraph({
       spacing: { after: 60 },
       children: [
-        new TextRun({ text: " FG ", bold: true, color: COLORS.bg, shading: { type: ShadingType.CLEAR, fill: COLORS.cyan } }),
+        new TextRun({ text: " FG ", bold: true, color: COLORS.onAccent, shading: { type: ShadingType.CLEAR, fill: COLORS.accent } }),
         new TextRun({ text: "   " }),
         new TextRun({ text: "Fit", bold: true, size: 32, color: COLORS.text }),
-        new TextRun({ text: "Git", bold: true, size: 32, color: COLORS.cyan }),
+        new TextRun({ text: "Git", bold: true, size: 32, color: COLORS.accent }),
       ],
     }),
     new Paragraph({
@@ -119,7 +119,7 @@ function buildFooter() {
       new Paragraph({
         alignment: AlignmentType.CENTER,
         children: [
-          new TextRun({ text: "FitGit", bold: true, size: 16, color: COLORS.cyan }),
+          new TextRun({ text: "FitGit", bold: true, size: 16, color: COLORS.accent }),
           new TextRun({ text: "   ·   Seite ", size: 16, color: COLORS.muted }),
           new TextRun({ children: [PageNumber.CURRENT], size: 16, color: COLORS.muted }),
           new TextRun({ text: " von ", size: 16, color: COLORS.muted }),
@@ -146,7 +146,7 @@ async function buildPlan({ planName, days, outFile }) {
       new Paragraph({
         pageBreakBefore: index > 0 && index % 2 === 0,
         spacing: { before: index === 0 ? 320 : 240, after: 160 },
-        border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: COLORS.cyan } },
+        border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: COLORS.accent } },
         children: [
           new TextRun({ text: `TAG ${index + 1}`, bold: true, size: 20, color: COLORS.muted, characterSpacing: 20 }),
           new TextRun({ text: "   " }),
@@ -161,7 +161,7 @@ async function buildPlan({ planName, days, outFile }) {
   children.push(
     new Paragraph({
       spacing: { before: 200, after: 100 },
-      children: [new TextRun({ text: "HINWEIS", bold: true, size: 18, color: COLORS.cyan, characterSpacing: 20 })],
+      children: [new TextRun({ text: "HINWEIS", bold: true, size: 18, color: COLORS.accent, characterSpacing: 20 })],
     }),
   );
   children.push(
@@ -179,7 +179,6 @@ async function buildPlan({ planName, days, outFile }) {
   children.push(writeLine());
 
   const doc = new Document({
-    background: { color: COLORS.bg },
     styles: { default: { document: { run: { color: COLORS.text, font: "Calibri" } } } },
     sections: [
       {
