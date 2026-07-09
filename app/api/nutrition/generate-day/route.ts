@@ -1,7 +1,18 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
+import { ADMIN_COOKIE_NAME, computeAdminToken } from '@/lib/auth/adminSession';
 
 export const runtime = 'nodejs';
+
+// Nur mit gültigem Admin-Cookie — verhindert, dass Fremde die (kostenpflichtige)
+// KI-Generierung auslösen.
+async function isAdmin(): Promise<boolean> {
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  if (!adminPassword) return false;
+  const cookie = (await cookies()).get(ADMIN_COOKIE_NAME)?.value;
+  return cookie === (await computeAdminToken(adminPassword));
+}
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
 
@@ -44,6 +55,10 @@ const dayTool: Anthropic.Tool = {
 };
 
 export async function POST(req: Request) {
+  if (!(await isAdmin())) {
+    return NextResponse.json({ error: 'Nicht autorisiert.' }, { status: 401 });
+  }
+
   const { targets, dietStyle, preferences, allergies, dietForm, mealSlots, dayLabel, avoidMeals } =
     await req.json();
 

@@ -1,11 +1,12 @@
 'use server';
 
-import { supabaseServer } from '@/lib/supabase/server';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 import { dayTotals, mealTotals } from '@/lib/nutrition/totals';
 import { GOAL_LABEL, type MacroTargets, type Goal, type DietForm, type DietStyle } from '@/lib/nutrition/macros';
 import type { PlanDay } from '@/lib/nutrition/types';
 
 interface SaveArgs {
+  targetEmail: string;
   goal: Goal;
   dietForm: DietForm;
   dietStyle: DietStyle;
@@ -13,15 +14,41 @@ interface SaveArgs {
   week: PlanDay[];
 }
 
-export async function savePlan({ goal, dietForm, dietStyle, targets, week }: SaveArgs) {
-  const supabase = await supabaseServer();
+export async function savePlan({ targetEmail, goal, dietForm, dietStyle, targets, week }: SaveArgs) {
+  const email = targetEmail.trim().toLowerCase();
+  if (!email || !email.includes('@')) {
+    throw new Error('Bitte eine gültige Ziel-E-Mail angeben.');
+  }
+
+  const supabase = supabaseAdmin();
+
+  // Nutzer über sein Profil (E-Mail → user_id) finden. Muss vorher registriert sein.
+  const { data: profile, error: profileErr } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('email', email)
+    .maybeSingle();
+  if (profileErr) throw new Error(profileErr.message);
+  if (!profile) {
+    throw new Error(
+      `Kein Konto für ${email} gefunden. Der Nutzer muss sich zuerst (in der TryMe-App) registrieren.`,
+    );
+  }
+  const userId = profile.id as string;
+
   const name = `${GOAL_LABEL[goal]} · ${targets.kcal} kcal · ${new Date().toLocaleDateString('de-DE')}`;
 
-  await supabase.from('nutrition_plans').update({ is_active: false }).eq('is_active', true);
+  // Bisherigen aktiven Plan dieses Nutzers deaktivieren, neuen aktiv setzen.
+  await supabase
+    .from('nutrition_plans')
+    .update({ is_active: false })
+    .eq('user_id', userId)
+    .eq('is_active', true);
 
   const { data: plan, error } = await supabase
     .from('nutrition_plans')
     .insert({
+      user_id: userId,
       name, goal, diet_form: dietForm, diet_style: dietStyle, is_active: true,
       target_kcal: targets.kcal, protein_g: targets.proteinG,
       carbs_g: targets.carbsG, fat_g: targets.fatG,
@@ -62,5 +89,5 @@ export async function savePlan({ goal, dietForm, dietStyle, targets, week }: Sav
       );
     }
   }
-  return { planId: plan.id };
+  return { planId: plan.id, email };
 }
