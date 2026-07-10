@@ -26,11 +26,20 @@ export async function POST(request: NextRequest) {
     dietStyle,
     preferences,
     allergies,
+    healthConsent,
   } = body ?? {};
 
   if (!name || !email || !goal || !heightCm || !weightKg) {
     return NextResponse.json(
       { error: "Bitte alle Pflichtfelder ausfüllen." },
+      { status: 400 },
+    );
+  }
+
+  // Health data (Art. 9 GDPR) may only be processed with explicit consent.
+  if (healthConsent !== true) {
+    return NextResponse.json(
+      { error: "Ohne Einwilligung in die Verarbeitung der Gesundheitsdaten können wir keinen Plan erstellen." },
       { status: 400 },
     );
   }
@@ -56,6 +65,8 @@ export async function POST(request: NextRequest) {
     `Ernährungsform: ${STIL[dietStyle] ?? dietStyle ?? "(keine Angabe)"}`,
     `Vorlieben: ${preferences || "(keine Angabe)"}`,
     `Allergien: ${allergies || "(keine Angabe)"}`,
+    ``,
+    `Einwilligung Gesundheitsdaten (Art. 9 Abs. 2 lit. a DSGVO): erteilt am ${new Date().toISOString()}`,
     ``,
     `→ Plan im Admin-Generator erstellen und auf diese E-Mail speichern.`,
   ];

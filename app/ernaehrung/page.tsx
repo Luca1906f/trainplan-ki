@@ -25,6 +25,7 @@ export default function ErnaehrungAnfrage() {
       dietStyle: form.get("dietStyle"),
       preferences: form.get("preferences"),
       allergies: form.get("allergies"),
+      healthConsent: form.get("healthConsent") === "on",
     };
 
     try {
@@ -237,6 +238,31 @@ export default function ErnaehrungAnfrage() {
             />
           </div>
 
+          <label className="flex items-start gap-3 rounded-lg border border-zinc-200 p-3 text-sm dark:border-zinc-800">
+            <input
+              type="checkbox"
+              name="healthConsent"
+              required
+              className="mt-1 h-4 w-4 shrink-0 accent-red-600"
+            />
+            <span className="text-zinc-600 dark:text-zinc-400">
+              Ich willige ausdrücklich ein, dass meine Gesundheitsdaten (Größe,
+              Gewicht, Geschlecht, Alter, Ziel, Ernährungsform, Allergien) zur
+              Erstellung meines Ernährungsplans verarbeitet und dafür an den
+              KI-Dienst Claude (Anthropic) übermittelt werden — ohne Name und
+              E-Mail-Adresse (Art. 9 Abs. 2 lit. a DSGVO). Freiwillig, jederzeit
+              widerrufbar.{" "}
+              <a
+                href="https://fitgit.app/datenschutz"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-red-600 underline"
+              >
+                Datenschutzerklärung
+              </a>
+            </span>
+          </label>
+
           {status === "error" && (
             <p className="text-sm text-red-600">{errorMessage}</p>
           )}
@@ -250,8 +276,8 @@ export default function ErnaehrungAnfrage() {
           </button>
 
           <p className="text-center text-xs text-zinc-500 dark:text-zinc-500">
-            Kein Fertig-Plan aus dem Automaten — Luca erstellt ihn selbst und
-            spielt ihn an dein TryMe-Konto aus.
+            Keine ärztliche Beratung. Kein Fertig-Plan aus dem Automaten — Luca
+            erstellt ihn selbst und spielt ihn an dein TryMe-Konto aus.
           </p>
         </form>
       </div>
