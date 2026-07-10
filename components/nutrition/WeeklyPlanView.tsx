@@ -31,7 +31,7 @@ export function WeeklyPlanView({
             key={i}
             onClick={() => setActive(i)}
             className={`rounded-lg px-3 py-1 text-sm ${
-              i === active ? 'bg-neutral-900 text-white' : 'border'
+              i === active ? 'bg-primary text-primary-foreground' : 'border'
             }`}
           >
             {d.dayLabel.slice(0, 2)}
@@ -40,9 +40,9 @@ export function WeeklyPlanView({
       </div>
 
       <div className="flex items-center justify-between text-sm">
-        <span className="text-neutral-600">
+        <span className="text-foreground/80">
           {t.kcal} kcal · {t.proteinG}P {t.carbsG}C {t.fatG}F
-          <span className="text-neutral-400"> / Ziel {targets.kcal} kcal</span>
+          <span className="text-muted-foreground"> / Ziel {targets.kcal} kcal</span>
         </span>
         {onRegenerate && (
           <button onClick={() => onRegenerate(active)} className="rounded-lg border px-2 py-1 text-xs">
@@ -52,7 +52,7 @@ export function WeeklyPlanView({
       </div>
 
       {flagged && (
-        <p className="text-xs text-amber-600">
+        <p className="text-xs text-destructive">
           Weicht deutlich vom Ziel ab — Tag ggf. neu generieren.
         </p>
       )}
@@ -64,7 +64,7 @@ export function WeeklyPlanView({
       </div>
 
       {day.tips?.length > 0 && (
-        <div className="rounded-lg bg-neutral-50 p-3 text-sm text-neutral-600">
+        <div className="rounded-lg bg-muted p-3 text-sm text-foreground/80">
           {day.tips.map((tip, i) => (
             <p key={i}>💡 {tip}</p>
           ))}

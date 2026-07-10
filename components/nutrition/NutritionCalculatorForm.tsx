@@ -54,7 +54,7 @@ export function NutritionCalculatorForm({
       </div>
 
       <details className="rounded-lg border p-3">
-        <summary className="cursor-pointer text-sm text-neutral-600">Genauer einstellen</summary>
+        <summary className="cursor-pointer text-sm text-foreground/80">Genauer einstellen</summary>
         <div className="mt-3 grid grid-cols-2 gap-3">
           <Field label="Körperfett % (optional)">
             <Input type="number" value={value.bodyFatPct ?? ''}
@@ -88,7 +88,7 @@ export function NutritionCalculatorForm({
                   <button key={s} type="button"
                     onClick={() => set('mealSlots',
                       on ? value.mealSlots.filter((x) => x !== s) : [...value.mealSlots, s])}
-                    className={`rounded-lg px-2 py-1 text-xs ${on ? 'bg-neutral-900 text-white' : 'border'}`}>
+                    className={`rounded-lg px-2 py-1 text-xs ${on ? 'bg-primary text-primary-foreground' : 'border'}`}>
                     {s}
                   </button>
                 );
@@ -113,7 +113,7 @@ export function NutritionCalculatorForm({
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block text-sm">
-      <span className="mb-1 block text-neutral-500">{label}</span>
+      <span className="mb-1 block text-muted-foreground">{label}</span>
       {children}
     </label>
   );

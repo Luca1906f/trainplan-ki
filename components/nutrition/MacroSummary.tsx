@@ -19,15 +19,15 @@ export function MacroSummary({ t, warnings }: { t: MacroTargets; warnings: strin
         {cells.map((c) => (
           <div key={c.label} className="rounded-xl border p-3 text-center">
             <div className="text-lg font-semibold">{c.value}</div>
-            <div className="text-xs text-neutral-500">{c.label}</div>
+            <div className="text-xs text-muted-foreground">{c.label}</div>
           </div>
         ))}
       </div>
-      <p className="text-xs text-neutral-500">
+      <p className="text-xs text-muted-foreground">
         Berechnet mit {FORMULA_LABEL[t.formula]} · effektiv {macrosKcal(t)} kcal
       </p>
       {warnings.map((w) => (
-        <p key={w} className="text-xs text-amber-600">{w}</p>
+        <p key={w} className="text-xs text-destructive">{w}</p>
       ))}
     </div>
   );
