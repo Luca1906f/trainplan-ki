@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, FormEvent } from "react";
+import SiteHeader from "@/components/SiteHeader";
 
 interface DayInput {
   name: string;
@@ -69,10 +70,11 @@ export default function GeneratorPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col items-center bg-zinc-50 px-6 py-16 dark:bg-black">
-      <div className="w-full max-w-2xl">
+    <div className="flex flex-1 flex-col bg-zinc-50 dark:bg-black">
+      <SiteHeader />
+      <div className="mx-auto w-full max-w-2xl px-6 py-16">
         <header className="mb-8">
-          <p className="text-sm font-semibold uppercase tracking-wide text-red-600">
+          <p className="text-sm font-semibold uppercase tracking-wide text-[hsl(212_60%_50%)]">
             FitGit intern
           </p>
           <h1 className="mt-2 text-2xl font-bold text-zinc-900 dark:text-zinc-50">
@@ -145,7 +147,7 @@ export default function GeneratorPage() {
                   <button
                     type="button"
                     onClick={() => removeDay(index)}
-                    className="text-sm text-red-600 hover:underline"
+                    className="text-sm text-[hsl(212_60%_50%)] hover:underline"
                   >
                     Entfernen
                   </button>
@@ -155,7 +157,7 @@ export default function GeneratorPage() {
             <button
               type="button"
               onClick={addDay}
-              className="text-sm font-medium text-red-600 hover:underline"
+              className="text-sm font-medium text-[hsl(212_60%_50%)] hover:underline"
             >
               + Tag hinzufügen
             </button>
@@ -168,7 +170,7 @@ export default function GeneratorPage() {
           <button
             type="submit"
             disabled={status === "generating"}
-            className="w-full rounded-full bg-red-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-60"
+            className="w-full rounded-full bg-[hsl(212_60%_50%)] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[hsl(212_60%_42%)] disabled:opacity-60"
           >
             {status === "generating" ? "Generiere…" : "Word-Vorlage generieren"}
           </button>
