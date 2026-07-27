@@ -69,6 +69,36 @@ export function TrainingPlanner() {
     }
   }
 
+  async function exportWord() {
+    if (!draft) return;
+    setError(null);
+    try {
+      const res = await fetch('/api/training/export-docx', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan: draft, clientName: inputs.clientName }),
+      });
+      if (!res.ok) throw new Error('Word-Export fehlgeschlagen.');
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `FitGit-Trainingsplan-${new Date().toISOString().slice(0, 10)}.docx`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Word-Export fehlgeschlagen.');
+    }
+  }
+
+  function exportPdf() {
+    if (!draft) return;
+    // The print view reads this and calls window.print(); the browser's
+    // "Save as PDF" produces the file.
+    sessionStorage.setItem('tp_export', JSON.stringify({ plan: draft, clientName: inputs.clientName }));
+    window.open('/trainingsplan/print', '_blank');
+  }
+
   return (
     <div className="mx-auto max-w-3xl space-y-6 p-4">
       <h1 className="text-xl font-semibold">Trainingsplan erstellen</h1>
@@ -127,6 +157,24 @@ export function TrainingPlanner() {
           </div>
 
           <PlanEditor plan={draft} onChange={setDraft} />
+
+          <div className="flex gap-2">
+            <button
+              onClick={exportPdf}
+              className="flex-1 rounded-xl border border-neutral-300 py-2.5 text-sm font-medium text-neutral-700"
+            >
+              Als PDF
+            </button>
+            <button
+              onClick={exportWord}
+              className="flex-1 rounded-xl border border-neutral-300 py-2.5 text-sm font-medium text-neutral-700"
+            >
+              Als Word
+            </button>
+          </div>
+          <p className="text-center text-xs text-neutral-400">
+            Export nutzt den aktuell bearbeiteten Stand — auch ohne Speichern.
+          </p>
 
           <div className="sticky bottom-0 -mx-4 border-t bg-white/95 p-4 backdrop-blur">
             {!emailValid && (
