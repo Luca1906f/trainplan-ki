@@ -1,6 +1,8 @@
 'use server';
 
+import { cookies } from 'next/headers';
 import { supabaseAdmin } from '@/lib/supabase/admin';
+import { ADMIN_COOKIE_NAME, computeAdminToken } from '@/lib/auth/adminSession';
 import { trainingPlanDraftSchema } from '@/lib/training/validate';
 import type { TrainingPlanDraft } from '@/lib/training/types';
 
@@ -9,12 +11,25 @@ interface SaveArgs {
   plan: TrainingPlanDraft;
 }
 
+// This action writes into any user's account via the service-role key, so it
+// must be admin-only in its own right — not just gated by the (currently
+// unwired) page middleware.
+async function assertAdmin(): Promise<void> {
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  const cookie = (await cookies()).get(ADMIN_COOKIE_NAME)?.value;
+  if (!adminPassword || cookie !== (await computeAdminToken(adminPassword))) {
+    throw new Error('Nicht autorisiert.');
+  }
+}
+
 /**
  * Schreibt einen (ggf. im Editor angepassten) Planentwurf nach Supabase:
  * plans → plan_days → plan_exercises → sets. Ab dann ist er die eine
  * Wahrheit — für die TRYME-App genauso wie für PDF- und DOCX-Export.
  */
 export async function saveTrainingPlan({ targetEmail, plan }: SaveArgs) {
+  await assertAdmin();
+
   const email = targetEmail.trim().toLowerCase();
   if (!email || !email.includes('@')) {
     throw new Error('Bitte eine gültige Ziel-E-Mail angeben.');
